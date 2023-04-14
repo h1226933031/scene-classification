@@ -2,7 +2,6 @@ import os
 from PIL import Image
 import torch
 from sklearn.model_selection import train_test_split
-import numpy as np
 import torchvision.transforms as transforms
 
 
