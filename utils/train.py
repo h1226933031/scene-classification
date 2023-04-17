@@ -25,13 +25,15 @@ def compute_acc_n_f1(preds, y, f1):
 
 def vali(model, f1, val_loader, criterion, label_dic, device):
     total_loss, total_correct, total = 0., 0, 0
-    preds, trues = torch.empty(0), torch.empty(0)
+    preds, trues = torch.empty(0).to(device), torch.empty(0).to(device)
     model.eval()  # disable Batch Normalization & Dropout
     with torch.no_grad():
         for inputs, labels in val_loader:
-            outputs = model(inputs).detach().cpu()
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            outputs = model(inputs)
 
-            loss = criterion(outputs, labels.to(device))
+            loss = criterion(outputs, labels)
             total_loss += loss.item()
             total += labels.shape[0]
 
@@ -39,7 +41,7 @@ def vali(model, f1, val_loader, criterion, label_dic, device):
             trues = torch.cat((trues, labels), dim=0)
 
     print('validation classification reports:')
-    print(classification_report(preds.numpy().tolist(), trues.numpy().tolist(), target_names=label_dic.keys()))
+    print(classification_report(preds.cpu().numpy().tolist(), trues.cpu().numpy().tolist(), target_names=label_dic.keys()))
     acc, f1score = compute_acc_n_f1(preds, trues, f1)
     model.train()  # able Batch Normalization & Dropout
     return total_loss / total, acc, f1score
@@ -47,14 +49,16 @@ def vali(model, f1, val_loader, criterion, label_dic, device):
 
 def train_one_epoch(model, f1, train_loader, optimizer, criterion, device):
     epoch_loss, total_correct, total = 0., 0., 0
-    preds, trues = torch.empty(0), torch.empty(0)
+    preds, trues = torch.empty(0).to(device), torch.empty(0).to(device)
     model.train()
     for inputs, labels in train_loader:
+        inputs = inputs.to(device)
+        labels = labels.to(device)
         # forward
-        outputs = model(inputs.to(device))  # [batch_size, 15]
+        outputs = model(inputs)  # [batch_size, 15]
         # backward
         optimizer.zero_grad()
-        loss = criterion(outputs, labels.to(device))
+        loss = criterion(outputs, labels)
         loss.backward()
         # update weights
         optimizer.step()
@@ -78,7 +82,7 @@ def train_results_plot(model_name, total_train_loss, total_valid_loss, total_tra
     ax.set_ylabel('loss')
     ax.set_title(f'{model_name} loss fig')
     ax.legend()
-    plt.savefig(os.path.join(save_path, model_name, 'loss.png'))
+    plt.savefig(os.path.join(save_path, model_name+'-loss.png'))
 
     fig, ax = plt.subplots(1, 2, figsize=(20, 8))
     ax[0].plot(x_index, total_train_acc, label='training accuracy')
@@ -95,5 +99,5 @@ def train_results_plot(model_name, total_train_loss, total_valid_loss, total_tra
     ax[1].set_title(f'{model_name} f1-score fig')
     ax[1].legend()
 
-    plt.savefig(os.path.join(save_path, model_name, 'accuracy+f1score.png.png'))
+    plt.savefig(os.path.join(save_path, model_name+'-accuracy+f1score.png'))
 

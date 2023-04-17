@@ -24,7 +24,8 @@ def main(args):
         device = torch.device("cpu")
         print('Use CPU')
 
-    train_data, val_data = read_data(args.data_path, args.labels, val_ratio=args.val_ratio, seed=fix_seed)
+    train_data, val_data = read_data(args.data_path, args.labels, val_ratio=args.val_ratio,
+                                     seed=fix_seed, augment=args.data_augmentation)
     print('#(train_data):', len(train_data))
     print('#(val_data):', len(val_data))
 
@@ -95,9 +96,9 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', type=str, default='CNN_3_layers', help='model name')
     parser.add_argument('--data_path', type=str, default='./train/', help='path of the data file')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='the ratio of validation set')
-    parser.add_argument('--data_augmentation', type=bool, default=False, help='whether apply data augmentation')
+    parser.add_argument('--data_augmentation', type=bool, default=True, help='whether apply data augmentation')
     # training parameters
-    parser.add_argument('--epochs', type=int, default=5, help='max training epochs')
+    parser.add_argument('--epochs', type=int, default=1, help='max training epochs')
     parser.add_argument('--batch_size', type=int, default=128, help='batch size')
     parser.add_argument('--lr', type=float, default=0.005, help='batch size')
     parser.add_argument('--ckpt_path', type=str, default='./ckpt/', help='path for saving the best model')

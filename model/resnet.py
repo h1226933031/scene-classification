@@ -22,11 +22,12 @@ class BasicBlock(nn.Module):
                 nn.Conv2d(in_c, out_c, kernel_size=kernel_size, stride=1, padding=self.n_pad, bias=False),
                 nn.BatchNorm2d(out_c)
             )
+        self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x):
         res = self.residual_function(x)
         shortcut = self.shortcut(x)
-        return nn.ReLU(inplace=True)(res + shortcut)
+        return self.relu(res + shortcut)
 
 
 class ResNet(nn.Module):
@@ -55,7 +56,7 @@ class ResNet(nn.Module):
         return self.fc(x)  # [batch_size, num_class=15]
 
 
-if __name__ == '__main__':
-    inputs = torch.randn(8, 1, 224, 224)
-    net = ResNet()
-    outputs = net(inputs)
+# if __name__ == '__main__':
+#     inputs = torch.randn(8, 1, 224, 224)
+#     net = ResNet()
+#     outputs = net(inputs)
