@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from load_data import read_data, Dataset_scene
+from utils.load_data import read_data, Dataset_scene
 import torch
 import torch.nn as nn
 from model.CNN import CNN_3_layers
@@ -74,7 +74,8 @@ def main(args):
             patient_count = 0
             best_val_loss = val_loss
             if args.ckpt_path:
-                torch.save(model.state_dict(), os.path.join(args.ckpt_path, args.model_name))
+                torch.save(model, os.path.join(args.ckpt_path, args.model_name) + '.pth')
+                # torch.save(model.state_dict(), os.path.join(args.ckpt_path, args.model_name)+'.pt')
                 # model.load_state_dict(torch.load(best_model_path))
         else:
             patient_count += 1

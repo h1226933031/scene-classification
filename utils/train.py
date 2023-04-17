@@ -2,6 +2,7 @@ import torch
 import os
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
+from utils.load_data import Dataset_scene
 
 
 def compute_acc_n_f1(preds, y, f1):
@@ -72,6 +73,20 @@ def train_one_epoch(model, f1, train_loader, optimizer, criterion, device):
     return epoch_loss / total, acc, f1score
 
 
+def prediction(test_data_dir, model_dir, start_label_index=1):
+    test_list = [os.path.join(test_data_dir, fig_path) for fig_path in os.listdir(test_data_dir)]
+    test_set = Dataset_scene(test_list, test=True)
+
+    model = torch.load(model_dir)  # must be .pth format
+    model.eval()  # disable Batch Normalization & Dropout
+    predictions = torch.empty(0)
+    with torch.no_grad():
+        for inputs in test_set:
+            outputs = torch.argmax(model(inputs), dim=1).add(start_label_index)
+            predictions = torch.cat((predictions, outputs), dim=0)
+    return predictions
+
+
 def train_results_plot(model_name, total_train_loss, total_valid_loss, total_train_acc, total_valid_acc,
                        total_train_f1, total_val_f1, save_path):
     x_index = range(1, len(total_train_loss)+1)
@@ -101,3 +116,6 @@ def train_results_plot(model_name, total_train_loss, total_valid_loss, total_tra
 
     plt.savefig(os.path.join(save_path, model_name+'-accuracy+f1score.png'))
 
+
+# pred = prediction(test_data_dir='../test_data/', model_dir='../ckpt/CNN_3_layers.pt')
+# print(pred)
