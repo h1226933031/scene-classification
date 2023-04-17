@@ -11,9 +11,9 @@ def read_data(root, label_dic, val_ratio, seed, augment=False):
     for category in label_dic.keys():
         dir_list = os.listdir(os.path.join(root, category))
         category_X = [os.path.join(root, category, path) for path in dir_list]
-        if augment:
-            category_X += [path + '_r' for path in category_X]
         train_x, val_x = train_test_split(category_X, test_size=val_ratio, random_state=seed)
+        if augment:
+            train_x += [path + '_r' for path in category_X]
         train += [(x, label_dic[category]) for x in train_x]
         val += [(x, label_dic[category]) for x in val_x]
     return train, val

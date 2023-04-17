@@ -30,7 +30,7 @@ def main(args):
     print('#(val_data):', len(val_data))
 
     train_set = Dataset_scene(train_data, augment=args.data_augmentation)
-    val_set = Dataset_scene(val_data, augment=args.data_augmentation)
+    val_set = Dataset_scene(val_data, augment=False)
 
     train_loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=args.batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(dataset=val_set, batch_size=args.batch_size, shuffle=False)
