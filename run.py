@@ -51,7 +51,7 @@ def main(args):
 
     total_train_loss, total_valid_loss, total_train_acc, total_valid_acc = [], [], [], []
     total_train_f1, total_val_f1 = [], []
-    f1 = F1Score(task='multiclass', num_classes=15, average='macro').to(device)
+    f1 = F1Score(task='multiclass', num_classes=15, average='macro')
     for path in [args.ckpt_path, args.fig_path]:
         if not os.path.exists(path):
             os.makedirs(path)

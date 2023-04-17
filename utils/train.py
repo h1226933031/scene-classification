@@ -10,7 +10,7 @@ def compute_acc_n_f1(preds, y, f1):
     """
     # top_pred = torch.argmax(preds, dim=1)
     correct = preds.eq(y.view_as(preds)).sum()
-    acc = correct.float() / y.shape[0]
+    acc = correct.int() / y.shape[0]
     return acc, f1(preds, y)
 
 
@@ -42,7 +42,7 @@ def vali(model, f1, val_loader, criterion, label_dic, device):
 
     print('validation classification reports:')
     print(classification_report(preds.cpu().numpy().tolist(), trues.cpu().numpy().tolist(), target_names=label_dic.keys()))
-    acc, f1score = compute_acc_n_f1(preds, trues, f1)
+    acc, f1score = compute_acc_n_f1(preds.cpu(), trues.cpu(), f1)
     model.train()  # able Batch Normalization & Dropout
     return total_loss / total, acc, f1score
 
@@ -68,7 +68,7 @@ def train_one_epoch(model, f1, train_loader, optimizer, criterion, device):
         epoch_loss += loss.item()
         total += labels.shape[0]
 
-    acc, f1score = compute_acc_n_f1(preds, trues, f1)
+    acc, f1score = compute_acc_n_f1(preds.cpu(), trues.cpu(), f1)
     return epoch_loss / total, acc, f1score
 
 

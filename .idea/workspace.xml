@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="bb5a0f65-16ed-46c3-92e0-1de938305ab1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/resnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ckpt/CNN_3_layers" beforeDir="false" afterPath="$PROJECT_DIR$/ckpt/CNN_3_layers" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fig/CNN_3_layers-accuracy+f1score.png" beforeDir="false" afterPath="$PROJECT_DIR$/fig/CNN_3_layers-accuracy+f1score.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fig/CNN_3_layers-loss.png" beforeDir="false" afterPath="$PROJECT_DIR$/fig/CNN_3_layers-loss.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/load_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/load_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/train.py" afterDir="false" />
     </list>

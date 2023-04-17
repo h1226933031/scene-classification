@@ -3,6 +3,7 @@ from PIL import Image
 import torch
 from sklearn.model_selection import train_test_split
 import torchvision.transforms as transforms
+import PIL
 
 
 def read_data(root, label_dic, val_ratio, seed, augment=False):
@@ -32,7 +33,7 @@ class Dataset_scene(torch.utils.data.Dataset):
         path_img, label = self.data_list[index]
         if self.augment and path_img[-2:] == '_r':  # horizontally flip the image
             img = Image.open(path_img[:-2]).convert('L')
-            img = img.transpose(Image.Transpose.FLIP_LEFT_RIGHT)  # H x W, reverse W index
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)  # H x W, reverse W index
         else:
             img = Image.open(path_img).convert('L')  # H x W
 
@@ -40,3 +41,6 @@ class Dataset_scene(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.data_list)
+
+
+print(PIL.__version__)
