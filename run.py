@@ -6,6 +6,7 @@ import torch.nn as nn
 from model.CNN import CNN_3_layers
 from model.resnet import ResNet
 from model.attention import Attention
+from model.vgg import VGG
 from utils.train import train_one_epoch, vali
 import argparse
 
@@ -32,7 +33,7 @@ def main(args):
     train_loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=args.batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(dataset=val_set, batch_size=args.batch_size, shuffle=False)
 
-    model_dict = {'CNN_3_layers': CNN_3_layers, 'ResNet': ResNet, 'Attention:': Attention}
+    model_dict = {'CNN_3_layers': CNN_3_layers, 'ResNet': ResNet, 'Attention:': Attention, 'VGG': VGG}
     model = model_dict[args.model_name]()
     model.to(device)
     criterion = nn.CrossEntropyLoss().to(device)
@@ -76,4 +77,5 @@ if __name__ == '__main__':
     args.labels = dict([(k, v - 1) for k, v in labels.items()])
     args.class_num = 15
     args.attention_block_num = [1, 1, 1]
+    args.vgg_version = 'Modified'
     main(args)
