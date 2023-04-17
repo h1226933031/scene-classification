@@ -114,4 +114,5 @@ if __name__ == '__main__':
     args.class_num = 15
     args.attention_block_num = [1, 1, 1]
     args.vgg_version = 'Modified'
+    args.fig_path = f'./{args.model_name}_b{args.batch_size}_lr{args.lr}' + '_w_aug/'
     main(args)
