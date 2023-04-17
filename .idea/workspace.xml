@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bb5a0f65-16ed-46c3-92e0-1de938305ab1" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/train.py" afterDir="false" />
-    </list>
+    <list default="true" id="bb5a0f65-16ed-46c3-92e0-1de938305ab1" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
