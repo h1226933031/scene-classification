@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 
 class CNN_3_layers(nn.Module):
-    def __init__(self):
+    def __init__(self, args):
         super(CNN_3_layers, self).__init__()
         # Conv1: 1 input channel, 4 output channels, kernel size 7x7; shape to 128*128
         self.conv1 = nn.Sequential(
@@ -27,7 +27,7 @@ class CNN_3_layers(nn.Module):
         )
 
         # Fully connected layer
-        self.fc = nn.Linear(16 * 8 * 8, 15)
+        self.fc = nn.Linear(16 * 8 * 8, args.class_num)
 
     def forward(self, x):  # input: [batch_size, n_channels=1, height=224, weight=224]
         x = self.conv1(x)  # [batch_size, n_channels=4, height-7+1, weight-7+1]

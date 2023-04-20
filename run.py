@@ -35,7 +35,7 @@ def main(args):
     train_loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=args.batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(dataset=val_set, batch_size=args.batch_size, shuffle=False)
 
-    model_dict = {'CNN_3_layers': CNN_3_layers, 'ResNet': ResNet, 'Attention:': Attention, 'VGG': VGG}
+    model_dict = {'CNN_3_layers': CNN_3_layers, 'ResNet': ResNet, 'Attention': Attention, 'VGG': VGG}
     model = model_dict[args.model_name](args)
     model.to(device)
 
@@ -88,7 +88,7 @@ def main(args):
     best_model = torch.load(os.path.join(args.ckpt_path, args.model_name) + '.pth')
     best_val_loss, best_val_acc, best_val_f1 = vali(best_model, f1, val_loader, criterion, args.labels, device)
     print(f"Evaluate the Best model: Val_Loss: {best_val_loss:.4f} -- Val_acc:{best_val_acc:.2%} -- Val_F1:{best_val_f1:.2f}")
-    
+
     # visualize training results
     train_results_plot(args.model_name, total_train_loss, total_valid_loss, total_train_acc, total_valid_acc,
                        total_train_f1, total_val_f1, args.fig_path)
@@ -97,14 +97,14 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='CNN family for Scene Multi-Classification')
     # basic configs
-    parser.add_argument('--model_name', type=str, default='ResNet', help='model name')
+    parser.add_argument('--model_name', type=str, default='CNN_3_layers', help='model name')
     parser.add_argument('--data_path', type=str, default='./train/', help='path of the data file')
-    parser.add_argument('--val_ratio', type=float, default=0.2, help='the ratio of validation set')
+    parser.add_argument('--val_ratio', type=float, default=0.1, help='the ratio of validation set')
     parser.add_argument('--class_num', type=int, default=15, help='num of image class')
     parser.add_argument('--data_augmentation', type=bool, default=True, help='whether apply data augmentation')
     # training parameters
-    parser.add_argument('--epochs', type=int, default=1, help='max training epochs')
-    parser.add_argument('--batch_size', type=int, default=128, help='batch size')
+    parser.add_argument('--epochs', type=int, default=40, help='max training epochs')
+    parser.add_argument('--batch_size', type=int, default=64, help='batch size')
     parser.add_argument('--lr', type=float, default=0.005, help='batch size')
     parser.add_argument('--ckpt_path', type=str, default='./ckpt/', help='path for saving the best model')
     parser.add_argument('--fig_path', type=str, default='./fig/', help='path for saving visualized training results')
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     labels = {'bedroom': 1, 'Coast': 2, 'Forest': 3, 'Highway': 4, 'industrial': 5, 'Insidecity': 6,
               'kitchen': 7, 'livingroom': 8, 'Mountain': 9, 'Office': 10, 'OpenCountry': 11, 'store': 12,
               'Street': 13, 'Suburb': 14, 'TallBuilding': 15}
-    args.labels = dict([(k, v - 1) for k, v in labels.items()])
+    args.labels = dict([(k.lower(), v - 1) for k, v in labels.items()])
     args.class_num = 15
     args.attention_block_num = [1, 1, 1]
     args.vgg_version = 'Modified'

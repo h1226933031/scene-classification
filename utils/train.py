@@ -9,7 +9,6 @@ def compute_acc_n_f1(preds, y, f1):
     """
     Returns accuracy and f1 score for the train/val dataset, i.e. if you get 8/10 right, this returns 0.8, NOT 8
     """
-    # top_pred = torch.argmax(preds, dim=1)
     correct = preds.eq(y.view_as(preds)).sum()
     acc = correct.int() / y.shape[0]
     return acc, f1(preds, y)
@@ -116,6 +115,3 @@ def train_results_plot(model_name, total_train_loss, total_valid_loss, total_tra
 
     plt.savefig(os.path.join(save_path, model_name+'-accuracy+f1score.png'))
 
-
-# pred = prediction(test_data_dir='../test_data/', model_dir='../ckpt/CNN_3_layers.pt')
-# print(pred)

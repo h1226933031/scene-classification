@@ -5,7 +5,14 @@ from sklearn.model_selection import train_test_split
 import torchvision.transforms as transforms
 
 
-def read_data(root, label_dic, val_ratio, seed, augment=False):
+def read_data(root, label_dic, val_ratio, seed, augment=False, test=False):
+    if test:
+        test_list = []
+        for category in os.listdir(root):
+            category_X = [os.path.join(root, category, path) for path in os.listdir(os.path.join(root, category))]
+            test_list += [(x, label_dic[category.lower()]) for x in category_X]
+        return test_list
+    # if not loading test, split every category based on given val_ratio
     train, val = [], []
     for category in label_dic.keys():
         dir_list = os.listdir(os.path.join(root, category))
@@ -13,8 +20,8 @@ def read_data(root, label_dic, val_ratio, seed, augment=False):
         train_x, val_x = train_test_split(category_X, test_size=val_ratio, random_state=seed)
         if augment:
             train_x += [path + '_r' for path in category_X]
-        train += [(x, label_dic[category]) for x in train_x]
-        val += [(x, label_dic[category]) for x in val_x]
+        train += [(x, label_dic[category.lower()]) for x in train_x]
+        val += [(x, label_dic[category.lower()]) for x in val_x]
     return train, val
 
 
@@ -22,7 +29,7 @@ class Dataset_scene(torch.utils.data.Dataset):
     def __init__(self, data, augment=False, desired_size=224, test=False):
         self.data_list = data
         self.augment = augment
-        self.test = test  # whether load labels
+        # self.test = test  # whether load labels
         # a series of transformations using torchvision.transforms, from PLI Image to normalized float tensors
         self.transform = transforms.Compose([transforms.Resize((desired_size, desired_size)),
                                              transforms.ToTensor(),
@@ -30,10 +37,10 @@ class Dataset_scene(torch.utils.data.Dataset):
                                              ])
 
     def __getitem__(self, index):
-        if self.test:
-            path_img = self.data_list[index]
-            img = Image.open(path_img).convert('L')  # H x W
-            return self.transform(img)
+        # if self.test:
+        #     path_img = self.data_list[index]
+        #     img = Image.open(path_img).convert('L')  # H x W
+        #     return self.transform(img)
 
         path_img, label = self.data_list[index]
         if self.augment and path_img[-2:] == '_r':  # horizontally flip the image
