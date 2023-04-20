@@ -4,7 +4,7 @@ from utils.load_data import read_data, Dataset_scene
 import torch
 import torch.nn as nn
 from model.CNN import CNN_3_layers
-from model.resnet import ResNet
+from model.resnet import ResNet, BasicBlock
 from model.attention import Attention
 from model.vgg import VGG
 from utils.train import train_one_epoch, vali, train_results_plot
@@ -36,11 +36,9 @@ def main(args):
     val_loader = torch.utils.data.DataLoader(dataset=val_set, batch_size=args.batch_size, shuffle=False)
 
     model_dict = {'CNN_3_layers': CNN_3_layers, 'ResNet': ResNet, 'Attention:': Attention, 'VGG': VGG}
-    if args.model_name == 'VGG':
-        model = VGG(args.vgg_version)
-    else:
-        model = model_dict[args.model_name]()
+    model = model_dict[args.model_name](args)
     model.to(device)
+
     criterion = nn.CrossEntropyLoss().to(device)
 
     optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
@@ -86,6 +84,11 @@ def main(args):
 
         scheduler.step()  # adjust learning rate
 
+    # report evaluations on the best model
+    best_model = torch.load(os.path.join(args.ckpt_path, args.model_name) + '.pth')
+    best_val_loss, best_val_acc, best_val_f1 = vali(best_model, f1, val_loader, criterion, args.labels, device)
+    print(f"Evaluate the Best model: Val_Loss: {best_val_loss:.4f} -- Val_acc:{best_val_acc:.2%} -- Val_F1:{best_val_f1:.2f}")
+    
     # visualize training results
     train_results_plot(args.model_name, total_train_loss, total_valid_loss, total_train_acc, total_valid_acc,
                        total_train_f1, total_val_f1, args.fig_path)
@@ -94,9 +97,10 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='CNN family for Scene Multi-Classification')
     # basic configs
-    parser.add_argument('--model_name', type=str, default='CNN_3_layers', help='model name')
+    parser.add_argument('--model_name', type=str, default='ResNet', help='model name')
     parser.add_argument('--data_path', type=str, default='./train/', help='path of the data file')
     parser.add_argument('--val_ratio', type=float, default=0.2, help='the ratio of validation set')
+    parser.add_argument('--class_num', type=int, default=15, help='num of image class')
     parser.add_argument('--data_augmentation', type=bool, default=True, help='whether apply data augmentation')
     # training parameters
     parser.add_argument('--epochs', type=int, default=1, help='max training epochs')
@@ -105,6 +109,17 @@ if __name__ == '__main__':
     parser.add_argument('--ckpt_path', type=str, default='./ckpt/', help='path for saving the best model')
     parser.add_argument('--fig_path', type=str, default='./fig/', help='path for saving visualized training results')
     parser.add_argument('--early_stopping_patience', type=int, default=5, help='early_stopping_patience')
+
+    # model-specified parameters
+    # 1. resnet
+    parser.add_argument('--resnet_input_channels', default=None, help='input_channels for ResNet')
+    parser.add_argument('--resnet_output_sizes', default=None, help='output_sizes for ResNet')
+    parser.add_argument('--resnet_kernel_sizes', default=None, help='kernel_sizes for ResNet')
+    # 2. Attention
+    parser.add_argument('--block_num', default=[1, 1, 1], help='kernel_sizes for ResNet')
+    # 3. VGG
+    parser.add_argument('--vgg_version', type=str, default='Modified', help="vgg version, choose from ['Modified', "
+                                                                            "'A', 'B', 'D', 'E']")
 
     args = parser.parse_args()
 

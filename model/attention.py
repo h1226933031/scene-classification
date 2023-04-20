@@ -300,7 +300,7 @@ class Attention(nn.Module):
         block_num: attention module number for each stage
     """
 
-    def __init__(self, block_num, class_num=15):
+    def __init__(self, args):
         super().__init__()
         self.pre_conv = nn.Sequential(
             nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1),
@@ -308,33 +308,26 @@ class Attention(nn.Module):
             nn.ReLU(inplace=True)
         )
 
-        self.stage1 = self._make_stage(16, 64, block_num[0], AttentionModule1)
-        self.stage2 = self._make_stage(64, 128, block_num[1], AttentionModule2)
-        self.stage3 = self._make_stage(128, 256, block_num[2], AttentionModule3)
+        self.stage1 = self._make_stage(16, 64, args.block_num[0], AttentionModule1)
+        self.stage2 = self._make_stage(64, 128, args.block_num[1], AttentionModule2)
+        self.stage3 = self._make_stage(128, 256, args.block_num[2], AttentionModule3)
         self.stage4 = nn.Sequential(
             PreActResidualUnit(256, 512, 2),  # residual layers
             PreActResidualUnit(512, 512, 1),
             PreActResidualUnit(512, 512, 1)
         )
         self.avg = nn.AdaptiveAvgPool2d(1)
-        self.linear = nn.Linear(512, class_num)
+        self.linear = nn.Linear(512, args.class_num)
 
     def forward(self, x):
         x = self.pre_conv(x)
-        print('self.pre_conv(x).size', x.size())
         x = self.stage1(x)
-        print('self.stage1(x).size', x.size())
         x = self.stage2(x)
-        print('self.stage2(x).size', x.size())
         x = self.stage3(x)
-        print('self.stage3(x).size', x.size())
         x = self.stage4(x)
-        print('self.stage4(x).size', x.size())
         x = self.avg(x)
-        print('self.avg(x).size', x.size())
         x = x.view(x.size(0), -1)
         x = self.linear(x)
-        print('self.linear(x).size', x.size())
         return x
 
     def _make_stage(self, in_channels, out_channels, num, block):

@@ -4,30 +4,32 @@ If you have any questions in regard to submission,
 please contact TA: Zheng Huan <huan_zheng@u.nus.edu>
 """
 
-
 ###################################### Subroutines #####################################################################
 """
 Example of subroutines you might need. 
 You could add/modify your subroutines in this section. You can also delete the unnecessary functions.
 It is encouraging but not necessary to name your subroutines as these examples. 
 """
+
+
 def build_vocabulary(**kwargs):
     pass
+
 
 def get_hist(**kwargs):
     pass
 
+
 def classifier(**kwargs):
     pass
+
 
 def get_accuracy(**kwargs):
     pass
 
+
 def save_model(**kwargs):
     pass
-
-
-
 
 
 ###################################### Main train and test Function ####################################################
@@ -40,6 +42,7 @@ the models, computing accuracy, saving the trained model, etc
 `test` function should contain operations including loading test images, loading pre-trained model, doing the test, 
 computing accuracy, etc.
 """
+
 
 def train(train_data_dir, model_dir, **kwargs):
     """Main training model.
@@ -70,17 +73,15 @@ def test(test_data_dir, model_dir, **kwargs):
     pass
 
 
-
 if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--phase', default='train', choices=['train','test'])
+    parser.add_argument('--phase', default='train', choices=['train', 'test'])
     parser.add_argument('--train_data_dir', default='./data/train/', help='the directory of training data')
     parser.add_argument('--test_data_dir', default='./data/test/', help='the directory of testing data')
     parser.add_argument('--model_dir', default='model.pkl', help='the pre-trained model')
     opt = parser.parse_args()
-
 
     if opt.phase == 'train':
         training_accuracy = train(opt.train_data_dir, opt.model_dir)
@@ -89,9 +90,3 @@ if __name__ == '__main__':
     elif opt.phase == 'test':
         testing_accuracy = test(opt.test_data_dir, opt.model_dir)
         print(testing_accuracy)
-
-
-
-
-
-
