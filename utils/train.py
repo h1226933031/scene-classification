@@ -14,15 +14,6 @@ def compute_acc_n_f1(preds, y, f1):
     return acc, f1(preds, y)
 
 
-# def categorical_accurate(preds, y, start_label_index=0):
-#     """
-#     Returns accuracy per batch, i.e. if you get 8/10 right, this returns 8
-#     """
-#     top_pred = torch.argmax(preds, dim=1).add(start_label_index)
-#     correct = top_pred.eq(y.view_as(top_pred)).sum()
-#     return correct.int()
-
-
 def vali(model, f1, val_loader, criterion, label_dic, device):
     total_loss, total_correct, total = 0., 0, 0
     preds, trues = torch.empty(0).to(device), torch.empty(0).to(device)

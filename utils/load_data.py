@@ -19,7 +19,7 @@ def read_data(root, label_dic, val_ratio, seed, augment=False, test=False):
         category_X = [os.path.join(root, category, path) for path in dir_list]
         train_x, val_x = train_test_split(category_X, test_size=val_ratio, random_state=seed)
         if augment:
-            train_x += [path + '_r' for path in category_X]
+            train_x += [path + '_r' for path in train_x]
         train += [(x, label_dic[category.lower()]) for x in train_x]
         val += [(x, label_dic[category.lower()]) for x in val_x]
     return train, val
@@ -54,3 +54,27 @@ class Dataset_scene(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.data_list)
 
+
+class Dataset_ptm(torch.utils.data.Dataset):
+    def __init__(self, data, augment=False, desired_size=256, test=False):
+        self.data_list = data
+        self.augment = augment
+        # self.test = test  # whether load labels
+        # a series of transformations using torchvision.transforms, from PLI Image to normalized float tensors
+        self.transform = transforms.Compose([transforms.Resize((256, 256)),
+                                             transforms.ToTensor(),
+                                             transforms.Normalize((0.5,), (0.5,)),
+                                             ])
+
+    def __getitem__(self, index):
+        path_img, label = self.data_list[index]
+        if self.augment and path_img[-2:] == '_r':  # horizontally flip the image
+            img = Image.open(path_img[:-2]).convert('L')
+            img = img.transpose(Image.FLIP_LEFT_RIGHT)  # H x W, reverse W index
+        else:
+            img = Image.open(path_img).convert('L')  # H x W
+        img = self.transform(img)
+        return torch.cat((img, img, img), 0), label  # [C=3, H x W]
+
+    def __len__(self):
+        return len(self.data_list)

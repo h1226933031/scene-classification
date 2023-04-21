@@ -1,10 +1,11 @@
 import numpy as np
 import os
-from utils.load_data import read_data, Dataset_scene
+from utils.load_data import read_data, Dataset_scene, Dataset_ptm
 import torch
 import torch.nn as nn
 from model.CNN import CNN_3_layers
-from model.resnet import ResNet, BasicBlock
+from model.resnet import ResNet
+from model.ptm_resnet import Ptm_ResNet
 from model.attention import Attention
 from model.vgg import VGG
 from utils.train import train_one_epoch, vali, train_results_plot
@@ -29,13 +30,18 @@ def main(args):
     print('#(train_data):', len(train_data))
     print('#(val_data):', len(val_data))
 
-    train_set = Dataset_scene(train_data, augment=args.data_augmentation)
-    val_set = Dataset_scene(val_data, augment=False)
+    if args.model_name == 'Ptm_ResNet':
+        train_set = Dataset_ptm(train_data, augment=args.data_augmentation)
+        val_set = Dataset_ptm(val_data, augment=False)
+    else:
+        train_set = Dataset_scene(train_data, augment=args.data_augmentation)
+        val_set = Dataset_scene(val_data, augment=False)
 
     train_loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=args.batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(dataset=val_set, batch_size=args.batch_size, shuffle=False)
 
-    model_dict = {'CNN_3_layers': CNN_3_layers, 'ResNet': ResNet, 'Attention': Attention, 'VGG': VGG}
+    model_dict = {'CNN_3_layers': CNN_3_layers, 'ResNet': ResNet, 'Attention': Attention,
+                  'VGG': VGG, 'Ptm_ResNet': Ptm_ResNet}
     model = model_dict[args.model_name](args)
     model.to(device)
 
@@ -97,13 +103,13 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='CNN family for Scene Multi-Classification')
     # basic configs
-    parser.add_argument('--model_name', type=str, default='CNN_3_layers', help='model name')
-    parser.add_argument('--data_path', type=str, default='./train/', help='path of the data file')
+    parser.add_argument('--model_name', type=str, default='Ptm_ResNet', help='model name')
+    parser.add_argument('--data_path', type=str, default='./data/train/', help='path of the data file')
     parser.add_argument('--val_ratio', type=float, default=0.1, help='the ratio of validation set')
     parser.add_argument('--class_num', type=int, default=15, help='num of image class')
     parser.add_argument('--data_augmentation', type=bool, default=True, help='whether apply data augmentation')
     # training parameters
-    parser.add_argument('--epochs', type=int, default=40, help='max training epochs')
+    parser.add_argument('--epochs', type=int, default=1, help='max training epochs')
     parser.add_argument('--batch_size', type=int, default=64, help='batch size')
     parser.add_argument('--lr', type=float, default=0.005, help='batch size')
     parser.add_argument('--ckpt_path', type=str, default='./ckpt/', help='path for saving the best model')
@@ -130,5 +136,6 @@ if __name__ == '__main__':
     args.class_num = 15
     args.attention_block_num = [1, 1, 1]
     args.vgg_version = 'Modified'
+    args.ptm_dropout = 0.4
     args.fig_path = f'./{args.model_name}_b{args.batch_size}_lr{args.lr}' + '_w_aug/'
     main(args)
