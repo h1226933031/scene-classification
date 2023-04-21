@@ -13,9 +13,9 @@ Model4: Attention Residual Network [[paper](https://arxiv.org/abs/1704.06904)].
 Modified VGG achieved the best result on scene dataset, with accuracy of up to 79% on the validation set. 
 
 
-## Main Results
+## Experiment Results
 
-`insert image here`.
+![image](https://github.com/h1226933031/scene-classification/blob/main/illustration/experiment%20results.png)
 
 
 ## Get Started
